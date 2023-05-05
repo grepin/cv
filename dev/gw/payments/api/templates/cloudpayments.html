@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <title>Оплата подписки</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+ </head>
+<body>
+    <script src="https://widget.cloudpayments.ru/bundles/cloudpayments"></script>
+    <script>
+    function payment_completed(options) {
+        $.post( '{{ on_completed_callback }}', JSON.stringify(options), function() {
+            // no-op
+        }).always(function() {
+            window.location.replace('{{ data.referer }}' + '?r=' + options.code) // return to source
+        });
+    }
+    this.pay = function () {
+     var widget = new cp.CloudPayments();
+        widget.pay('charge',
+            { //options
+                publicId: 'pk_223f94b3ed21154c19eabdd0d6cc8',
+                description: '{{ description }}', // 'Оплата товаров в example.com'
+                amount: {{ price }},  // 100 сумма
+                currency: '{{ currency }}', // 'RUB', //валюта
+                accountId: '{{ user_id }}', // 'user@example.com', //идентификатор плательщика (необязательно)
+                invoiceId: '{{ subscription_id }}', // '1234567', //номер заказа  (необязательно)
+                {% if email %}
+                email: '{{ email }}', //email плательщика (необязательно)
+                {% endif %}
+                {% if language %}
+                language: '{{ language }}', // язык: en-US, ru-RU
+                {% endif %}
+                skin: 'mini', //дизайн виджета (необязательно)
+                autoClose: 5, //время в секундах до авто-закрытия виджета (необязательный)
+                {% if data %}
+                data: '{{ data }}' // здесь дополнения по подписке, пока - заглушка
+                {% endif %}
+            },
+            {
+                onSuccess: function (options) { // success
+
+                },
+                onFail: function (reason, options) { // fail
+                    window.location.replace('{{ data.referer }}') // return to source
+                },
+                onComplete: function (paymentResult, options) { //Вызывается как только виджет получает от api.cloudpayments ответ с результатом транзакции.
+                     payment_completed(
+                         {
+                             account_id: "{{ user_id }}",
+                             subscription_id: "{{ subscription_id }}",
+                             provider: "providers.cloudpayments.CloudPayments",
+                             success: paymentResult['success'],
+                             message: paymentResult['message'] ?  paymentResult['message'] : "",
+                             code: paymentResult['code']
+                         }
+                     ) //например вызов вашей аналитики Facebook Pixel
+                }
+            }
+        )
+    };
+    pay();
+    </script>
+</body>
+</html>

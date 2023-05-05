@@ -1,0 +1,44 @@
+@startuml
+
+skinparam componentStyle uml2
+
+actor Клиент as Client
+actor Админ as Admin
+
+component AdminDjango
+database Postgres
+
+component SearchFastApiBackend
+component Etl
+database SearchElastic
+database SearchRedis
+
+component AuthFlask
+database AuthRedis
+database AuthPostgres
+
+component FakePleerApi #green
+queue Kafka #green
+database ClickHouse #green
+component SomeAnalitics #green
+
+Admin -> AdminDjango: Загрузка контента
+AdminDjango -> Postgres
+
+Client -> SearchFastApiBackend: Поиск фильмов
+SearchFastApiBackend -> SearchRedis: 1. Пробуем получить из КЭШа
+SearchFastApiBackend -down-> SearchElastic: 2. Если в КЭШе нет идем в Elastic, после чего кладем в КЭШ
+Etl -down-> Postgres
+Etl -> SearchElastic: перекладывает фильмы в поисковый движок
+
+Client -up-> AuthFlask: получить токены для работы
+AuthFlask -> AuthRedis
+AuthFlask -up-> AuthPostgres
+
+Client -down-> FakePleerApi #green: просмотр фильма
+FakePleerApi -> Kafka #green
+SearchFastApiBackend -> Kafka #green: поисковые запросы пользователей
+Kafka -> ClickHouse #green
+ClickHouse -> SomeAnalitics #green: аналитика менеджменту
+
+@enduml

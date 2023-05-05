@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package auth;
+
+service user {
+    rpc whois (Token) returns (Roles) {}
+}
+message Token {
+    string jwt = 1;
+}
+message Roles {
+    repeated string roles = 1;
+}

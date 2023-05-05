@@ -1,0 +1,296 @@
+version: "3.9"
+
+networks:
+  default:
+    name: common
+
+services:
+  postgres:
+    env_file:
+      - .env.docker
+    image: postgres:13.3
+    user: $POSTGRES_USER:$POSTGRES_GROUP
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    ports:
+    - 5432:5432
+
+  postgres-setup:
+    env_file:
+      - .env.docker
+    environment:
+      - PGPASSWORD=$POSTGRES_PASSWORD
+    image: postgres:13.3
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+    entrypoint: >
+      /bin/bash -c '
+        psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB -c "CREATE SCHEMA IF NOT EXISTS content" &&
+        psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB -c "CREATE SCHEMA IF NOT EXISTS auth" &&
+        psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\" SCHEMA auth" &&
+        psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB -c "GRANT ALL ON SCHEMA auth TO $POSTGRES_USER" &&
+        psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB -c "ALTER ROLE $POSTGRES_USER IN DATABASE $POSTGRES_DB SET search_path = auth"
+      '
+  app:
+    env_file:
+      - .env.docker
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=$POSTGRES_USER
+      - DB_NAME=$POSTGRES_DB
+      - DB_PASSWORD=$POSTGRES_PASSWORD
+    depends_on:
+      postgres-setup:
+        condition: service_completed_successfully
+    image: yp_app
+    build:
+      context: ./app/
+      dockerfile: Dockerfile
+    volumes:
+      - ./app/static:/app/static:rw
+    healthcheck:
+      test: curl -sS http://127.0.0.1:8000 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  postgres-app-data-restore:
+    env_file:
+      - .env.docker
+    environment:
+      - PGPASSWORD=$POSTGRES_PASSWORD
+    image: postgres:13.3
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: "no"
+    volumes:
+      - ./app/app.data.sql:/app.data.sql
+    entrypoint: >
+      /bin/bash -c '
+        psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB -f /app.data.sql
+      '
+
+  app-web:
+    env_file:
+      - .env.docker
+    image: nginx:latest
+    depends_on:
+      postgres-app-data-restore:
+        condition: service_completed_successfully
+    healthcheck:
+      test: curl -sS http://127.0.0.1:8000 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - ./app/nginx.conf:/etc/nginx/nginx.conf
+      - ./app/static:/static:ro
+
+  redis:
+    env_file:
+      - .env.docker
+    image: bitnami/redis:latest
+    depends_on:
+      postgres-setup:
+        condition: service_completed_successfully
+    healthcheck:
+      test: redis-cli -a $REDIS_PASSWORD ping || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    ports:
+      - 6379:6379
+
+  elasticsearch:
+    env_file:
+      - .env.docker
+    environment:
+      - discovery.type=single-node
+      - quiet=true
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    ports:
+      - 9200:9200
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: curl -sS -X GET "http://127.0.0.1:9200/_cluster/health?wait_for_status=green&timeout=10s" || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  elasticsearch-index-schema:
+    env_file:
+      - .env.docker
+    image: appropriate/curl
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: "no"
+    volumes:
+      - ./etl/es_index.sh:/es_index.sh
+    entrypoint: /bin/sh /es_index.sh
+
+  etl:
+    env_file:
+      - .env.docker
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=$POSTGRES_USER
+      - DB_NAME=$POSTGRES_DB
+      - DB_PASSWORD=$POSTGRES_PASSWORD
+    image: python:3.9.12-slim-buster
+    depends_on:
+      elasticsearch-index-schema:
+        condition: service_completed_successfully
+    volumes:
+      - ./etl/:/etl/
+      - ./etl/requirements.txt:/requirements.txt
+    entrypoint: >
+      /bin/bash -c "
+          pip3 install -r /requirements.txt 2>/dev/null 1>/dev/null &&
+          cd /etl/ &&
+          python3 etl.py
+      "
+
+  check-etl-initial-load:
+    env_file:
+      - .env.docker
+    image: appropriate/curl
+    depends_on:
+      etl:
+        condition: service_started
+    restart: "no"
+    volumes:
+      - ./etl/etl_check_initial_load.sh:/etl_check_initial_load.sh
+    entrypoint: /bin/sh /etl_check_initial_load.sh
+
+  grpcauth:
+    env_file:
+      - .env.docker
+    image: yp_auth_grpc
+    build:
+      context: ./auth/
+      dockerfile: Dockerfile.grpc
+
+  api:
+    env_file:
+      - .env.docker
+    depends_on:
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      elasticsearch-index-schema:
+        condition: service_completed_successfully
+      check-etl-initial-load:
+        condition: service_completed_successfully
+      grpcauth:
+        condition: service_started
+    image: yp_api
+    build:
+      context: ./api/
+      dockerfile: Dockerfile
+    healthcheck:
+      test: curl -sS http://127.0.0.1:8000/api/openapi || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  api-web:
+    env_file:
+      - .env.docker
+    image: nginx:latest
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: curl -sS http://127.0.0.1:8000/api/openapi || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - ./api/nginx.conf:/etc/nginx/nginx.conf
+
+  jaeger:
+    env_file:
+      - .env.docker
+    image: jaegertracing/all-in-one:1
+    ports:
+      - 16686:16686
+
+  auth:
+    env_file:
+      - .env.docker
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      api-web:
+        condition: service_healthy
+      jaeger:
+        condition: service_started
+    image: yp_auth
+    build:
+      context: ./auth/
+      dockerfile: Dockerfile
+    healthcheck:
+      test: curl -sS http://127.0.0.1:5000/auth/openapi || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  auth-web:
+    env_file:
+      - .env.docker
+    image: nginx:latest
+    depends_on:
+      auth:
+        condition: service_healthy
+    healthcheck:
+      test: curl -sS http://127.0.0.1:5000/auth/openapi || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - ./auth/nginx.conf:/etc/nginx/nginx.conf
+
+  gateway:
+    env_file:
+      - .env.docker
+    image: nginx:latest
+    depends_on:
+      auth-web:
+        condition: service_healthy
+      app-web:
+        condition: service_healthy
+      api-web:
+        condition: service_healthy
+      jaeger:
+        condition: service_started
+    healthcheck:
+      test: curl -sS http://127.0.0.1:5000/auth/openapi || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 8000:8000
+      - 5000:5000

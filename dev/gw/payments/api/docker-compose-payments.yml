@@ -1,0 +1,53 @@
+version: '3.9'
+
+networks:
+  default:
+    name: my-network
+
+services:
+  rabbitmq-manager:
+    image: rabbitmq:3.10-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    restart: always
+    ports:
+      - 15672:15672
+      - 5672:5672
+    healthcheck:
+      test: rabbitmq-diagnostics -q status && rabbitmq-diagnostics -q check_local_alarms || exit 1
+      interval: 10s
+      timeout: 8s
+      retries: 10
+
+  rabbit-create-queue-payments:
+    container_name: rabbit-create-queue-payments
+    depends_on:
+      rabbitmq-manager:
+        condition: service_healthy
+    image: rabbitmq:3.10-management
+    entrypoint: rabbitmqadmin --host=rabbitmq declare queue --vhost=/ name=payments
+
+  payments-api:
+    container_name: payments-api
+    hostname: payments-api
+    env_file:
+      - .env
+    depends_on:
+      rabbitmq-manager:
+        condition: service_healthy
+      rabbit-create-queue-payments:
+        condition: service_completed_successfully
+    image: yp_api_payments
+    ports:
+      - 8000:8000
+    volumes:
+      - ./templates/:/payments/api/templates/
+    build:
+      context: .
+      dockerfile: Dockerfile
+    healthcheck:
+      test: curl -sS http://127.0.0.1:8000/api/openapi || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s

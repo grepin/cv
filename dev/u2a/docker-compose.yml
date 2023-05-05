@@ -1,0 +1,172 @@
+version: "3.9"
+
+networks:
+  default:
+    name: common
+
+services:
+  postgres:
+    env_file:
+      - .env
+    image: postgres:13.3
+    user: $POSTGRES_USER:$POSTGRES_GROUP
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    ports:
+    - 5432:5432
+
+  postgres-setup:
+    env_file:
+      - .env
+    environment:
+      - PGPASSWORD=$POSTGRES_PASSWORD
+    image: postgres:13.3
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+    entrypoint: >
+      /bin/bash -c '
+        psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB -c "CREATE SCHEMA IF NOT EXISTS content" &&
+        psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB -c "CREATE SCHEMA IF NOT EXISTS auth" &&
+        psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\" SCHEMA auth" &&
+        psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB -c "GRANT ALL ON SCHEMA auth TO $POSTGRES_USER" &&
+        psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB -c "ALTER ROLE $POSTGRES_USER IN DATABASE $POSTGRES_DB SET search_path = auth"
+      '
+  app:
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=$POSTGRES_USER
+      - DB_NAME=$POSTGRES_DB
+      - DB_PASSWORD=$POSTGRES_PASSWORD
+    depends_on:
+      postgres-setup:
+        condition: service_completed_successfully
+    image: yp_app
+    build:
+      context: ./app/
+      dockerfile: Dockerfile
+    volumes:
+      - ./app/static:/app/static:rw
+    healthcheck:
+      test: curl -sS http://127.0.0.1:8000 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    ports:
+      - 9000:8000
+
+  postgres-app-data-restore:
+    env_file:
+      - .env
+    environment:
+      - PGPASSWORD=$POSTGRES_PASSWORD
+    image: postgres:13.3
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: "no"
+    volumes:
+      - ./app/app.data.sql:/app.data.sql
+    entrypoint: >
+      /bin/bash -c '
+        psql -h postgres -U $POSTGRES_USER -d $POSTGRES_DB -f /app.data.sql
+      '
+
+  redis:
+    env_file:
+      - .env
+    image: bitnami/redis:latest # поддерживает env REDIS_PASSWORD
+    depends_on:
+      postgres-setup:
+        condition: service_completed_successfully
+    healthcheck:
+      test: redis-cli -a $REDIS_PASSWORD ping || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    ports:
+      - 6379:6379
+
+  elasticsearch:
+    env_file:
+      - .env
+    environment:
+      - discovery.type=single-node
+      - quiet=true
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    ports:
+      - 9200:9200
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: curl -sS -X GET "http://127.0.0.1:9200/_cluster/health?wait_for_status=green&timeout=10s" || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  elasticsearch-index-schema:
+    env_file:
+      - .env
+    image: appropriate/curl
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: "no"
+    volumes:
+      - ./etl/es_index.sh:/es_index.sh
+    entrypoint: /bin/sh /es_index.sh
+
+  etl:
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=$POSTGRES_USER
+      - DB_NAME=$POSTGRES_DB
+      - DB_PASSWORD=$POSTGRES_PASSWORD
+    image: python:3.9.12-slim-buster
+    depends_on:
+      elasticsearch-index-schema:
+        condition: service_completed_successfully
+    volumes:
+      - ./etl/:/etl/
+      - ./etl/requirements.txt:/requirements.txt
+    entrypoint: >
+      /bin/bash -c "
+          pip3 install -r /requirements.txt 2>/dev/null 1>/dev/null &&
+          cd /etl/ &&
+          python3 etl.py
+      "
+
+  check-etl-initial-load:
+    env_file:
+      - .env
+    image: appropriate/curl
+    depends_on:
+      etl:
+        condition: service_started
+    restart: "no"
+    volumes:
+      - ./etl/etl_check_initial_load.sh:/etl_check_initial_load.sh
+    entrypoint: /bin/sh /etl_check_initial_load.sh
+
+  jaeger:
+    env_file:
+      - .env
+    image: jaegertracing/all-in-one:1
+    depends_on:
+      check-etl-initial-load:
+        condition: service_completed_successfully
+    ports:
+      - 16686:16686
+      - 6831:6831/udp

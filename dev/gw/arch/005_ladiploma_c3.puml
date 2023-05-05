@@ -1,0 +1,37 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+HIDE_STEREOTYPE()
+
+AddBoundaryTag("new", $bgColor="lightgreen", $fontColor="green", $borderColor="green")
+AddElementTag("new_container", $fontColor="#black", $bgColor="lightgreen")
+AddElementTag("external", $fontColor="#black", $bgColor="grey")
+
+Person(Client, "Client", "frontend")
+Person(Admin, "Administrator")
+ContainerDb(AuthPostgres, "DB", "PostgreSQL", "State storage")
+Container(PaymentService, "External pyment", "external API", $tags="external")
+
+System_Boundary(billing, "Billing service"){
+Container(BillingAdminPriceSetterApi, "Subscribtion price setter", "FlaskAPI", "")
+Container(BillingClientApi, "Client admin panel", "FastAPI", "")
+ContainerQueue(BillingKafka, "interaction bus", "RabbitMq", "")
+Container(BillingWorker, "State updater", "worker", "")
+Container(BillingPayApi, "Pay and Paid calls", "API", "шлюз для внешних вызовов, два вызова: pay (клиент получает ссылку на этот вызов от юзер-админки, сам вызов выдает ему html-код с нужными параметрами для оплаты) и paid (коллбэк для получения результата оплаты с клиентской стороны)")
+Container(Remainder, "Remainder", "", "забирает информацию из БД и шлет сообшение в очередь")
+}
+
+Client -up-> BillingClientApi
+Client -> BillingPayApi: редирект из Client admin panel
+Admin -> BillingAdminPriceSetterApi
+BillingAdminPriceSetterApi -up-> AuthPostgres
+BillingClientApi -> BillingKafka
+BillingClientApi -up-> AuthPostgres
+BillingKafka -> BillingWorker
+BillingWorker -> AuthPostgres
+BillingPayApi -up-> BillingKafka
+BillingWorker -up-> PaymentService
+Remainder -> AuthPostgres
+Remainder -> BillingKafka
+
+@enduml

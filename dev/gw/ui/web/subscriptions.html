@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en" class="h-100">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.104.2">
+    <title>pycinema :: мои подписки</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+    <meta name="theme-color" content="#712cf9">
+
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .nav-link {
+        font-size: larger;
+      }
+      .autop {
+          font-size: large;
+          text-align: center;
+          vertical-align: center;
+      }
+      .message-text {
+        font-size: larger;
+      }
+
+      .card-body {
+        font-size: smaller;
+      }
+
+      .b-example-divider {
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+    .ui-dialog-titlebar-close:after {
+       content: 'X' !important;
+       position: absolute;
+       top: -3px;
+       right: 3px;
+    }
+
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link href="https://getbootstrap.com/docs/5.2/examples/sticky-footer-navbar/sticky-footer-navbar.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/5.2/examples/pricing/pricing.css" rel="stylesheet">
+  </head>
+  <body class="d-flex flex-column h-100">
+
+<header>
+  <!-- Fixed navbar -->
+  <nav class="navbar navbar-expand-md navbar-dark navbar-static-top bg-dark">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="subscriptions.html">Мои подписки</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="payments.html">Мои платежи</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="logout" href="#">Выйти</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav me-auto me-2 me-md-0">
+          <li class="nav-item">
+            <a id="userinfo" class="nav-link">Пользователь</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+<!-- Begin page content -->
+<main class="flex-shrink-0">
+<div class="container py-3">
+    <div class="row row-cols-1 row-cols-md-3 mb-3 text-center" id="subholder">
+    </div>
+</div>
+</main>
+
+<footer class="footer mt-auto py-3 bg-light">
+  <div class="container">
+    <span id="messages" class="text-muted message-text">&nbsp;</span>
+  </div>
+</footer>
+<div id="dialog-confirm" title="Отменить подписку?">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Мы отменим подписку и вернем средства. Вы действительно этого хотите?</p>
+</div>
+<div id="dialog-autoenable" title="Включить автопродление подписки?">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Вы собираетесь разово оплатить подписку. Хотите включить автоматическое продление при ее окончании?</p>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://simplycalc.com/base64.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <script>
+    function update_message(text) {
+        $("#messages").text(text)
+    }
+    function parseJwt (token) {
+        try {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        } catch (e) {
+            return null;
+        }
+    }
+    function gc(k) {
+        return $.cookie(k);
+    }
+    function rc(k) {
+        return $.removeCookie(k, { path: '/' });
+    }
+    function sc(k, v) {
+        //console.log(k + ' [old] => ' + JSON.stringify(parseJwt($.cookie(k))))
+        $.cookie(k, v, { path: '/' });
+        //console.log(k + ' [new] => ' + JSON.stringify(parseJwt($.cookie(k))))
+    }
+    function refresh_token() {
+        myurl = "https://pycinema.ru/auth/api/v1/token/token-reissue"
+        headers = Object.assign({}, {'Content-Type': 'application/json',}, refresh_headers())
+        $.ajax({
+            url: myurl,
+            method: 'GET',
+            headers: headers,
+            complete: function (jqXHR) {
+                hx = jqXHR.getAllResponseHeaders()
+                if (hx) {
+                    if (hx.includes("access_token") && hx.includes("refresh_token")) {
+                        sc("access_token", jqXHR.getResponseHeader("access_token"));
+                        sc("refresh_token", jqXHR.getResponseHeader("refresh_token"));
+                        json = parseJwt($.cookie('access_token'))
+                        message = json['user_email'] + ' [' + json['role'] + '] // ' + (new Date().toLocaleString())
+                        $("#userinfo").text(message)
+                        update_subscriptions();
+                        return
+                    }
+                }
+                msg = '[' + jqXHR.status + '] unable to refresh, token could become stale // ' + (new Date().toLocaleString()) + ' while token_refresh';
+                update_message(msg)
+            }
+        });
+    }
+    function update_userinfo() {
+        if (!$.cookie('access_token')) logout()
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        for (const [key, value] of urlSearchParams.entries()) {
+            if (key == 'r')  {
+                sc('block-sub', value)
+                window.location.replace('subscriptions.html')
+            }
+        }
+        refresh_token();
+    }
+    function logout() {
+        rc("access_token");
+        rc("refresh_token");
+        window.location.replace('index.html')
+    }
+    $("#logout").on("click", function (event) {
+        event.preventDefault();
+        logout()
+    });
+
+    function subscription_template_badge(string_date, is_auto) {
+        const auto = is_auto? '(+автопродление)' : '';
+        const template = `
+            <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger fw-light">
+                до ${string_date} ${auto}
+                <span class="visually-hidden">hidden value</span>
+            </span>`
+        return template
+    }
+    function subscription_template(id, name, price, currency, duration, description, subscribe_active, subscribe, badge) {
+        const template = `
+      <div class="col">
+        <div class="card mb-4 rounded-3 shadow-sm">
+          <div class="card-header py-3">
+            <h4 class="my-0 fw-normal">
+                ${name}
+                ${badge}
+            </h4>
+          </div>
+          <div class="card-body">
+            <h1 class="card-title pricing-card-title">${price} ${currency}</h1>
+            <h2><small class="text-muted fw-light">${duration}</small></h2>
+            <ul class="list-unstyled mt-3 mb-4">
+              <li>${description}</li>
+            </ul>
+            <button type="button" class="w-100 btn btn-lg btn-primary ${subscribe_active }" id="${id}">${subscribe}</button>
+          </div>
+        </div>
+      </div>
+        `
+        return template
+    }
+    function refresh_headers() {
+        return {"refresh_token": $.cookie("refresh_token")}
+    }
+    function auth_headers() {
+        return {"Authorization": "Bearer " + $.cookie("access_token")}
+    }
+    function duration2string(d) {
+        if (d == 1) return 'день';
+        if ((d >= 2) &&  (d <= 4)) return 'дня';
+        if ((d < 1)) {
+            xd = Math.round(1440 * d)
+            if (xd % 10 == 1) return 'минута';
+            if ((xd % 10 >= 2) &&  (xd % 10 <= 4)) return 'минуты';
+            return 'минут';
+        }
+        return 'дней';
+    }
+    function dtzp(value, limit) {
+        if (value < limit) return '0' + value;
+        return '' + value;
+    }
+    function update_subscriptions_including_user(data) {
+        myurl = "https://pycinema.ru/client/api/v1/subcriptions/my/subscription/"
+        headers = Object.assign({}, {'Content-Type': 'application/json',}, auth_headers())
+        $.ajax({
+            url: myurl,
+            method: 'GET',
+            headers: headers,
+            complete: function (jqXHR) {
+                if ((jqXHR.status != 200) && (jqXHR.status != 404)) {
+                    msg = '[' + jqXHR.status + '] ' + jqXHR.statusText + ' // ' + (new Date().toLocaleString()) + ' while fetching user subscriptions';
+                    update_message(msg)
+                    return
+                }
+                if (jqXHR.status == 404) {
+                    generate_subscriptions(data)
+                    return
+                }
+                jsa = jqXHR.responseJSON
+                found = false;
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].id == jsa['price'].id) {
+                        found = true;
+                    }
+                }
+                let found_id = null
+                if (found) {
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].id == jsa['price'].id) {
+                            sc('block-sub', '1')
+                            data[i].subscribe = "Отписаться";
+                            dt = new Date(jsa['subscription']['subscribtion_expiration_datetime'] + 'Z')
+                            found_id = data[i].id
+                            data[i].badge = subscription_template_badge(
+                                dtzp(dt.getDate(),10) + '/' + dtzp((dt.getMonth() +1),10) + '/' + dt.getFullYear() + ' ' + dtzp(dt.getHours(), 10) + ':' + dtzp(dt.getMinutes(),10),
+                                jsa['subscription']['auto_renewal']
+                            )
+                            $("#dialog-confirm").attr("lang", jsa['subscription']['id'])
+                        } else {
+                            data[i].subscribe_active = "disabled";
+                        }
+                    }
+                }
+                generate_subscriptions(data)
+                if (found_id != null) {
+                    $("#" + found_id).unbind("click")
+                    $("#" + found_id).on("click", function (event) {
+                        event.preventDefault();
+                        $("#dialog-confirm").show()
+                        $("#dialog-confirm").dialog({
+                              resizable: false,
+                              height: "auto",
+                              width: 400,
+                              modal: true,
+                              buttons: {
+                                "Да, хочу отписаться": function() {
+                                    $( this ).dialog( "close" );
+                                    unsubscribe($("#dialog-confirm").attr("lang"))
+                                },
+                                "Нет, я ошибся": function() {
+                                    $( this ).dialog( "close" );
+                                }
+                              }
+                        });
+                    });
+                }
+            }
+        });
+    }
+    function update_subscriptions() {
+        url = "https://pycinema.ru/client/api/v1/subcriptions/";
+        headers = Object.assign({}, {'Content-Type': 'application/json',}, auth_headers())
+        $.ajax({
+            url: url,
+            method: 'GET',
+            headers: headers,
+            complete: function (jqXHR) {
+                if (jqXHR.status != 200) {
+                    msg = '[' + jqXHR.status + '] ' + jqXHR.statusText + ' // ' + (new Date().toLocaleString()) + ' while fetching subscriptions prices';
+                    update_message(msg)
+                    return
+                }
+                jsa = jqXHR.responseJSON
+                data = []
+                for(i = 0; i < jsa.length; i++) {
+                    let name = '';
+                    let duration = 0;
+                    if (jsa[i].duration >= 1) {
+                        name = Math.round(jsa[i].price * jsa[i].duration / Math.PI)+ ' кг. фильмов';
+                        duration = jsa[i].duration
+                    }
+                    else {
+                        name = Math.round(jsa[i].price * (1 / jsa[i].duration) / 100)+ ' гр. фильмов';
+                        duration = Math.round(1440 * jsa[i].duration)
+                    }
+
+                    data.push(
+                        {
+                            id: jsa[i].id,
+                            name:  name,
+                            price: jsa[i].price,
+                            currency: jsa[i].currency,
+                            duration: duration + ' ' + duration2string(jsa[i].duration),
+                            description: jsa[i].id,
+                            subscribe_active: gc('block-sub') == '0' ? " disabled" : '',
+                            subscribe: "Подписаться",
+                            badge: "",
+                        }
+                    )
+                }
+                update_subscriptions_including_user(data)
+            }
+        });
+    }
+
+    function unsubscribe(subscription_id) {
+        myurl = "https://pycinema.ru/client/api/v1/subcriptions/my/subscription/"
+        headers = Object.assign({}, {'Content-Type': 'application/json',}, auth_headers())
+        req = {
+            "subscription_id": subscription_id,
+            "payment_status": "invoce_created",
+        }
+        $.ajax({
+            url: myurl,
+            method: 'PATCH',
+            headers: headers,
+            data: JSON.stringify(req),
+            dataType: 'json',
+            complete: function (jqXHR) {
+                if (jqXHR.status != 200) {
+                    msg = '[' + jqXHR.status + '] ' + jqXHR.statusText + ' // ' + (new Date().toLocaleString()) + ' while unsubscribing';
+                    update_message(msg)
+                    return
+                }
+                jsr = jqXHR.responseJSON
+            }
+        })
+    }
+
+    function subscribe(subscription_id) {
+        $("#dialog-autoenable").show()
+        $("#dialog-autoenable").dialog({
+            resizable: false,
+            height: "auto",
+            width: 400,
+            modal: true,
+            buttons: {
+                "Да": function() {
+                    $( this ).dialog( "close" );
+                    subscribe_real(subscription_id, true);
+                },
+                "Нет, спишите деньги однократно": function() {
+                    $( this ).dialog( "close" );
+                    subscribe_real(subscription_id, false);
+                }
+            }
+        });
+    }
+
+    function subscribe_real(subscription_id, auto) {
+        myurl = "https://pycinema.ru/client/api/v1/subcriptions/my/subscription/"
+        headers = Object.assign({}, {'Content-Type': 'application/json',}, auth_headers())
+        start_date = new Date().toISOString()
+        req = {
+            "subscription_id": subscription_id,
+            "start_date": start_date,
+            "referer": window.location.href,
+            "auto_renewal": auto
+        }
+        $.ajax({
+            url: myurl,
+            method: 'POST',
+            headers: headers,
+            data: JSON.stringify(req),
+            dataType: 'json',
+            complete: function (jqXHR) {
+                if (jqXHR.status != 200) {
+                    msg = '[' + jqXHR.status + '] ' + jqXHR.statusText + ' // ' + (new Date().toLocaleString()) + ' while subscribing';
+                    update_message(msg)
+                    return
+                }
+                jsr = jqXHR.responseJSON
+                if (jsr['response_from_pay'] != 'success') {
+                    msg = '[XXX] bad response from pay: ' + jsr['response_from_pay']  + ' // ' + (new Date().toLocaleString()) + ' while subscribing';
+                    update_message(msg)
+                    return
+                }
+                window.location.replace(jsr['message'])
+            }
+        })
+    }
+    function generate_subscriptions(data) {
+        text = ""
+        for (let i = 0; i < data.length; i++) {
+            text += subscription_template(
+                data[i].id,
+                data[i].name,
+                data[i].price,
+                data[i].currency,
+                data[i].duration,
+                data[i].description,
+                data[i].subscribe_active,
+                data[i].subscribe,
+                data[i].badge
+            )
+        }
+        $("#subholder").html(text)
+        for (let i = 0; i < data.length; i++) {
+            $("#" + data[i].id).on("click", function (event) {
+                event.preventDefault();
+                subscribe(data[i].id)
+            });
+        }
+    }
+    $("#dialog-confirm").hide()
+    $("#dialog-autoenable").hide()
+    update_subscriptions();
+    update_userinfo()
+    setInterval(function() { update_userinfo(); }, 1000)
+    //setInterval(function() { update_subscriptions(); }, 10000)
+    </script>
+  </body>
+</html>

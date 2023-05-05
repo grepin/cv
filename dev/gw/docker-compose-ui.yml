@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  web-ui:
+    container_name: web-ui
+    hostname: web-ui
+    env_file:
+      - .env
+    image: nginx:latest
+    volumes:
+      - ./ui/nginx.conf:/etc/nginx/nginx.conf
+      - ./ui/cors-options-hack.conf:/etc/nginx/cors-options-hack.conf:ro
+      - ./ui/web:/web:ro
+      - ./ui/ssl:/ssl:ro
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - my-network

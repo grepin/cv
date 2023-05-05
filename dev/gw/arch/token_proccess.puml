@@ -1,0 +1,50 @@
+@startuml
+
+actor Клиент as Client
+participant AuthFlask
+database Redis
+database Postgers
+participant SsoApi
+
+== новый пользователь ==
+
+Client -> AuthFlask: создать пользователя
+AuthFlask -> Postgers: добавить пользователя
+
+== login ==
+
+Client -> AuthFlask: вводит логин и пароль
+AuthFlask -> Postgers: проверить информацию пользователя, добавить в лог
+AuthFlask -> Client: выдан Refresh и Access токены
+
+== logout ==
+
+Client -> AuthFlask: выходит из сервиса
+AuthFlask -> Postgers: добавить в лог
+AuthFlask -> Redis: добавить токены в базу как не валидных
+
+== авторизация через SSO ==
+
+== создание пользователя ==
+Client -> AuthFlask: выбирает в качетсве авторизации внешний сервис
+AuthFlask -> Client: редирект к внешнему сервису за нужными данными о пользователе
+Client -> SsoApi: авторизуется в сервисе
+Client -> SsoApi: разрешает выдать нужные данные
+SsoApi -> Client: получает внешний access token
+Client -> AuthFlask: передает внешний access токен
+AuthFlask -> SsoApi: проверяет валидность токена
+SsoApi -> AuthFlask: отдает данные о пользователе
+AuthFlask -> Postgers: добавить пользователя
+
+== логинимся с SSO токеном ==
+Client -> AuthFlask: выбирает внешний способ авторизации
+AuthFlask -> Client: редирект к внешнему сервису
+Client -> SsoApi: авторизуется в сервисе
+SsoApi -> Client: получает внешний access token
+Client -> AuthFlask: передает внешний access токен
+AuthFlask -> Postgers: проверяем пользователя
+AuthFlask -> SsoApi: проверяет валидность токена
+AuthFlask -> Client: выдан Refresh и Access токены
+AuthFlask -> Postgers: запись в лог
+
+@enduml

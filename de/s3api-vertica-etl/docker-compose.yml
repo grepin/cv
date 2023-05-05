@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  de-s6p:
+    image: sindb/de-pg-cr-af:latest
+    env_file:
+      - .env
+    ports:
+      - 8000:3000
+    volumes:
+      - ./src/dags/:/lessons/dags
+      - p6db:/var/lib/postgresql
+    restart: unless-stopped
+
+volumes:
+  p6db:

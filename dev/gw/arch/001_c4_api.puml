@@ -1,0 +1,40 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+HIDE_STEREOTYPE()
+
+Person(Client, "Client", "frontend")
+Person(Admin, "Administrator")
+
+System_Boundary(AdminPanel, "Admin Panel"){
+Container(AdminDjango, "API", "Django")
+ContainerDb(Postgres, "DB", "PostgerSQL")
+}
+
+System_Boundary(FullTextSearch, "Full Text Search"){
+Container(SearchFastApiBackend, "API", "FastApi")
+Container(Etl, "Etl", "Python")
+ContainerDb(SearchElastic, "DB", "ElasticSearch")
+ContainerDb(SearchRedis, "Cache", "Redis")
+}
+
+System_Boundary(Auth, "Auth"){
+Container(AuthFlask, "API", "Flask")
+ContainerDb(AuthRedis, "Сache", "Redis")
+ContainerDb(AuthPostgres, "DB", "PostgreSQL")
+}
+
+
+Admin -> AdminDjango: Загрузка контента
+AdminDjango -> Postgres: ro/rw
+
+Client -down-> SearchFastApiBackend: Поиск фильмов
+SearchFastApiBackend -> SearchRedis: 1. Пробуем получить из КЭШа
+SearchFastApiBackend -down-> SearchElastic: 2. Если в КЭШе нет идем в Elastic, после чего кладем в КЭШ
+Etl <-down-> Postgres: ro
+Etl <-> SearchElastic: перекладывает фильмы в поисковый движок
+
+Client -> AuthFlask: получить токены для работы
+AuthFlask -> AuthRedis
+AuthFlask -up-> AuthPostgres
+
+@enduml

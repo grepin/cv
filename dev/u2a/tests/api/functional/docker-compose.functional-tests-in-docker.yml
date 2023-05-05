@@ -1,0 +1,17 @@
+version: "3.9"
+
+networks:
+  default:
+    name: common
+
+services:
+  functional-tests:
+    env_file:
+      - .env
+    build:
+      context: $PATH_TO_ROOT_FROM_TESTS
+      dockerfile: tests/api/functional/Dockerfile
+    image: yp_functional_tests
+
+
+

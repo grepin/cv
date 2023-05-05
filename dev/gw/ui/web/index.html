@@ -1,0 +1,130 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pycinema.ru :: вход</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="https://getbootstrap.com/docs/5.2/examples/sign-in/signin.css" rel="stylesheet">
+  </head>
+  <body class="text-center">
+        <main class="form-signin w-100 m-auto">
+            <div class="mb-3 fw-normal">
+                <div class="alert alert-danger" role="alert" id="emsg" style="display:none">A</div>
+            </div>
+          <form>
+            <h1 class="h3 mb-3 fw-normal">Вход</h1>
+            <div class="form-floating">
+              <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+              <label for="floatingInput">Email</label>
+            </div>
+            <div class="form-floating">
+              <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+              <label for="floatingPassword">Пароль</label>
+            </div>
+            <button id="login" class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
+          </form>
+        </main>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://simplycalc.com/base64.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <script>
+        function message(msg) {
+            $("#emsg").text(msg)
+            $("#emsg").show()
+        }
+        function sc(k, v) { $.cookie(k, v,  { path: '/' }); }
+        function login(user_email, password) {
+            url = "https://pycinema.ru/auth/api/v1/users/login";
+            req = { "user_email": user_email, "password": password }
+            x = $.ajax({
+                url: url,
+                method: 'POST',
+                data: JSON.stringify(req),
+                headers: { 'Content-Type': 'application/json', },
+                dataType: 'json',
+                complete: function(jqXHR) {
+                    if (jqXHR.status == 200) {
+                        $("#emsg").removeClass("alert-danger")
+                        $("#emsg").addClass("alert-success")
+                    }
+                    msg = '[' + jqXHR.status + '] ' + jqXHR.statusText;
+                    message(msg)
+                    at = jqXHR.getResponseHeader("access_token")
+                    rt = jqXHR.getResponseHeader("refresh_token")
+                    sleep(1000)
+                    if ((at != null) && (rt != null)) {
+                        sc("access_token", at);
+                        sc("refresh_token", rt);
+                        window.location.replace('subscriptions.html')
+                    }
+                }
+            });
+        }
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        $("#login").on("click", function (event) {
+            event.preventDefault();
+            login($("#floatingInput").val(), $("#floatingPassword").val())
+        });
+    </script>
+  </body>
+</html>

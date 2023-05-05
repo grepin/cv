@@ -1,0 +1,123 @@
+version: '3.9'
+
+volumes:
+  auth_volume:
+  auth_postgres_volume:
+
+networks:
+  my-network:
+
+services:
+  rabbitmq-manager:
+    image: rabbitmq:3.10-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    restart: always
+    ports:
+      - 15672:15672
+      - 5672:5672
+    healthcheck:
+      test: rabbitmq-diagnostics -q status && rabbitmq-diagnostics -q check_local_alarms || exit 1
+      interval: 10s
+      timeout: 8s
+      retries: 10
+    networks:
+      - my-network
+
+  rabbit-create-queue-payments:
+    container_name: rabbit-create-queue-payments
+    depends_on:
+      rabbitmq-manager:
+        condition: service_healthy
+    image: rabbitmq:3.10-management
+    entrypoint: rabbitmqadmin --host=rabbitmq declare queue --vhost=/ name=payments
+    networks:
+      - my-network
+
+  authpostgres:
+    image: postgres:13.7-alpine
+    container_name: authpostgres
+    hostname: authpostgres
+    restart: always
+    environment:
+      POSTGRES_DB: $AUTH_POSTGRES_DB
+      POSTGRES_USER: $AUTH_POSTGRES_USER
+      POSTGRES_PASSWORD: $AUTH_POSTGRES_PASSWORD
+    volumes:
+      - auth_postgres_volume:/var/lib/postgresql/data
+      - ./auth-pgdump.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - my-network
+
+  celery-redis:
+    hostname: celery-redis
+    container_name: celery-redis
+    env_file:
+      - .env
+    environment:
+      REDIS_HOST: $CELERY_REDIS_HOST
+      REDIS_PORT: $CELERY_REDIS_PORT
+      REDIS_PASSWORD: $CELERY_REDIS_PASSWORD
+    image: bitnami/redis:latest
+    depends_on:
+      rabbitmq-manager:
+        condition: service_healthy
+    healthcheck:
+      test: redis-cli -a $CELERY_REDIS_PASSWORD ping || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    ports:
+      - 6379:6379
+    networks:
+      - my-network
+
+  payexecutor:
+    env_file:
+      - .env
+    environment:
+      CELERY_NEEDS_SQLALCHEMY: 1
+    build:
+      context: .
+      dockerfile: payexecutor.Dockerfile
+    image: payexecutor
+    hostname: payexecutor
+    container_name: payexecutor
+    healthcheck:
+      test: celery -b amqp://$RMQ_USER:$RMQ_PASSWORD@$RMQ_HOST:5672 inspect ping -d celery@payexecutor || exit 1
+      interval: 10s
+      timeout: 9s
+      retries: 5
+      start_period: 5s
+    depends_on:
+      rabbitmq-manager:
+        condition: service_healthy
+      celery-redis:
+        condition: service_healthy
+      authpostgres:
+        condition: service_healthy
+      rabbit-create-queue-payments:
+        condition: service_completed_successfully
+    networks:
+      - my-network
+
+  paymessenger:
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: paymessenger.Dockerfile
+    image: paymessenger
+    hostname: paymessenger
+    container_name: paymessenger
+    depends_on:
+      rabbit-create-queue-payments:
+        condition: service_completed_successfully
+    networks:
+      - my-network

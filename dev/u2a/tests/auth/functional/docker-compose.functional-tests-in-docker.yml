@@ -1,0 +1,17 @@
+version: "3.9"
+
+networks:
+  default:
+    name: common
+
+services:
+  functional-tests:
+    env_file:
+      - .env.docker
+    build:
+      context: $PATH_TO_ROOT_FROM_TESTS
+      dockerfile: tests/auth/functional/Dockerfile
+    image: yp_auth_functional_tests
+
+
+

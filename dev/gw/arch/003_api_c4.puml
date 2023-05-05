@@ -1,0 +1,82 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+HIDE_STEREOTYPE()
+
+AddBoundaryTag("new", $bgColor="lightgreen", $fontColor="green", $borderColor="green")
+AddElementTag("new_container", $fontColor="#black", $bgColor="lightgreen")
+AddElementTag("external", $fontColor="#black", $bgColor="grey")
+
+Person(Client, "Client", "frontend")
+Person(Admin, "Administrator")
+
+System_Boundary(AdminPanel, "Admin Panel"){
+Container(AdminDjango, "API", "Django")
+ContainerDb(Postgres, "DB", "PostgerSQL")
+}
+
+System_Boundary(FullTextSearch, "Full Text Search"){
+Container(SearchFastApiBackend, "API", "FastApi")
+Container(Etl, "Etl", "Python")
+ContainerDb(SearchElastic, "DB", "ElasticSearch")
+ContainerDb(SearchRedis, "Cache", "Redis")
+}
+
+System_Boundary(Auth, "Auth"){
+Container(AuthFlask, "API", "Flask")
+ContainerDb(AuthRedis, "Сache", "Redis")
+ContainerDb(AuthPostgres, "DB", "PostgreSQL")
+}
+
+Container(Ya, "Yandex", "external SSO", $tags="external")
+Container(Vk, "VK", "external SSO", $tags="external")
+
+System_Boundary(UGC, "UGC"){
+Container(EventApi, "EventApi", "FastApi", "АПИ для плеера")
+ContainerQueue(Kafka, "Queue", "Kafka")
+Container(ReviewsApi, "ReviewsApi", "FastApi", "API для работы с лайками, закладками и отзывами", $tags="new_container")
+ContainerDb(MongoDb, "DB", "MongoDB", "База данных для лайков, закладок и отзывов", $tags="new_container")
+}
+
+System_Boundary(OLAP, "OLAP"){
+Container(KafkaEtlClickhouse, Etl, "Python")
+ContainerDb(ClickHouse, "DB", "ClickHouse")
+Container(SomeAnalitics, "BI", "", "Интерфейс к базе данных")
+}
+
+System_Boundary(ELK, "Log Collector - ELK"){
+Container(ReviewsLogstash, "Logs collect", "Logstash", "Сборка логов из остальных сервисов", $tags="new_container")
+ContainerDb(ReviewsElastic, "Logs store", "ElasticSearch", "База данных для сбора логов", $tags="new_container")
+Container(ReviewsKibana, "Logs view", "Kibana", "Интерфейс для просмотра логов", $tags="new_container")
+}
+
+Admin -> AdminDjango: Загрузка контента
+AdminDjango -> Postgres: ro/rw
+
+Client -down-> SearchFastApiBackend: Поиск фильмов
+SearchFastApiBackend -> SearchRedis: 1. Пробуем получить из КЭШа
+SearchFastApiBackend -down-> SearchElastic: 2. Если в КЭШе нет идем в Elastic, после чего кладем в КЭШ
+Etl -down-> Postgres: ro
+Etl -> SearchElastic: перекладывает фильмы в поисковый движок
+
+Client -up-> AuthFlask: получить токены для работы
+AuthFlask -> AuthRedis
+AuthFlask -up-> AuthPostgres
+AuthFlask -left-> Ya
+AuthFlask -left-> Vk
+
+Client --> EventApi: просмотр фильма
+EventApi -down-> Kafka
+
+Kafka -> KafkaEtlClickhouse
+KafkaEtlClickhouse -down-> ClickHouse: перекладывает данные
+ClickHouse -> SomeAnalitics: аналитика менеджменту
+
+Client -right-> ReviewsApi
+ReviewsApi -down-> MongoDb
+MongoDb -> Kafka
+
+ReviewsLogstash -> ReviewsElastic
+ReviewsElastic -> ReviewsKibana
+
+@enduml

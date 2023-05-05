@@ -1,0 +1,50 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+HIDE_STEREOTYPE()
+
+AddBoundaryTag("new", $bgColor="lightgreen", $fontColor="green", $borderColor="green")
+AddElementTag("new_container", $fontColor="#black", $bgColor="lightgreen")
+AddElementTag("external", $fontColor="#black", $bgColor="grey")
+
+Person(Admin, "Admin", "Администраторы системы уведомлений, через административную панель на фронте")
+Person(Client, "Client", "Получатель уведомления")
+Container(OtherEventsApi, "Events from others API", "http/json", "События который генереруют другие части кинотеатра на которые подписан пользователь")
+Container(AuthApi, "Authorization service", "http/json", "Получить список пользователей и список email", $tags="external")
+
+System_Boundary(notifications, "Notifications service"){
+Container(NotificationsMassReciveApi, "Notification mass reciver", "http/json", "Получение массовых уведомлений")
+Container(NotificationsPersonalReciveApi, "Notification personal reciver", "http/json", "Получение индивидуальных уведомлений")
+ContainerQueue(RabbitMq, "Notification queue store", "RabbitMQ", "Хранение уведомлений")
+Container(M2Em, "Worker consumer", "python", "Забирает собщение из rabbitMQ и перекладывает их в celery")
+Container(M2Ws, "Worker consumer", "python", "Забирает сообщения из rabbitMQ и перекладывает их в websocket api")
+Container(Celery2Email, "Notification email sender", "Python + Celery", "Отправка уведомлений email")
+Container(NotificationsSendWebsocketApi, "Notification websocket sender", "http/json", "Отправка уведомлений websocket")
+}
+
+ContainerDb(MongoDb, "DB", "MongoDB", "База данных для хранения уведомлений")
+
+Admin -down--> NotificationsMassReciveApi
+Admin -down-> NotificationsPersonalReciveApi
+OtherEventsApi -down--> NotificationsMassReciveApi
+OtherEventsApi -down-> NotificationsPersonalReciveApi
+
+NotificationsMassReciveApi -> AuthApi: запросить список пользователей
+NotificationsPersonalReciveApi -> AuthApi: запросить email
+
+NotificationsMassReciveApi -down-> RabbitMq
+NotificationsPersonalReciveApi -down-> RabbitMq
+RabbitMq -down-> M2Em
+RabbitMq -down-> M2Ws
+M2Em -down-> Celery2Email
+M2Ws -down-> NotificationsSendWebsocketApi
+
+NotificationsMassReciveApi -down-> MongoDb: добавление уведомления
+NotificationsPersonalReciveApi -down-> MongoDb: добавление уведомления
+Celery2Email -down-> MongoDb: смена статуса уведомления
+NotificationsSendWebsocketApi -down-> MongoDb: смена статуса уведомления
+
+Celery2Email -down-> Client
+NotificationsSendWebsocketApi -down-> Client
+
+@enduml

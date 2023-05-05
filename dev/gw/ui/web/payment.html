@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <title>Тест оплаты виджетом</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://simplycalc.com/base64.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <style>
+        .ui-dialog ui-dialog-buttonpane {
+            text-align: center !important
+        }
+        .ui-dialog ui-dialog-buttonpane {
+            float: none !important;
+        }
+        .textarea-div {
+            text-align: center !important;
+            width: 100%;
+            height: 50%;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="textarea-div" class="textarea-div">
+        <textarea id="data">
+{
+    "template": "cloudpayments.html",
+    "on_completed_callback": "https://pycinema.ru/payments/api/v1/paid/",
+    "description": "Оплата подписки в pycinema.ru",
+    "price": "200",
+    "currency": "RUB",
+    "user_id": "c2d61d2b-4042-4a32-bea0-7cde7dceeca0",
+    "subscription_id": "123a8a30-441a-483f-bd4b-f6cb46b4447d",
+    "email": "georgy.v.repin@yandex.ru",
+    "language": "ru-RU",
+    "data": { "referer": "/"}
+}
+        </textarea>
+    </div>
+    <div id="pay"><button class="ui-button ui-widget ui-corner-all">Оплатить</button></div>
+
+    <script>
+    function redirect() {
+        window.location.replace('https://pycinema.ru/payments/api/v1/pay/' + base64url_encode($("#data").val()))
+    }
+    $( function() {
+        $.fn.extend({
+            center: function () {
+                return this.each(function() {
+                    var top = ($(window).height() - $(this).outerHeight()) / 2;
+                    var left = ($(window).width() - $("button").width()) / 2;
+                    $(this).css({position:'absolute', margin:0, top: (top > 0 ? top : 0)+'px', left: (left > 0 ? left : 0)+'px'});
+                });
+            },
+            dataupdate: function () {
+                return this.each(function() {
+                    var top = 0;
+                    var left = ($(window).width() * 0.25) ;
+                    var height = ($(window).height() / 2 - $("button").height() * 2);
+                    var width = ($(window).width() * 0.5 + $("button").width() /2 ) ;
+                    $(this).css({position:'absolute', margin:0, top: (top > 0 ? top : 0)+'px', left: (left > 0 ? left : 0)+'px', height: height+'px', width: width+'px'});
+                });
+            },
+        });
+
+        $("#pay").center()
+        $("#data").dataupdate()
+        $( "button" ).on( "click", function( event ) {
+            event.preventDefault();
+            redirect()
+        } );
+    } );
+    </script>
+</body>
+</html>
