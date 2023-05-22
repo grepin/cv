@@ -1,0 +1,164 @@
+List of new documents
++---------------------------------+
+|id                               |
++---------------------------------+
+|SBA-OCIO-2015-08-002-2023-05-22-0|
+|SBA-OCIO-2015-08-002-2023-05-22-1|
+|SBA-OCIO-2015-08-002-2023-05-22-2|
+|SBA-OCIO-2015-08-002-2023-05-22-3|
+|SBA-OCIO-2015-08-002-2023-05-22-4|
+|SBA-OCIO-2015-08-002-2023-05-22-5|
+|SBA-OCIO-2015-08-002-2023-05-22-6|
+|SBA-OCIO-2015-08-002-2023-05-22-7|
+|SBA-OCIO-2015-08-002-2023-05-22-8|
+|SBA-OCIO-2015-08-002-2023-05-22-9|
++---------------------------------+
+
+List of modified attributes
++--------------------+----------+--------------------------------+----------+-------------------------------------+----------------------------------------------------------------------------------------------------------------------+
+|id                  |modified  |path                            |jws       |value                                |value_prev                                                                                                            |
++--------------------+----------+--------------------------------+----------+-------------------------------------+----------------------------------------------------------------------------------------------------------------------+
+|SBA-OCA-2017-11-001 |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                       |null                                                                                                                  |
+|SBA-OCIO-2015-08-002|2023-05-22|root=>keyword=>2                |0.0       |mod@2023-05-22                       |null                                                                                                                  |
+|SBA-OCA-2017-11-006 |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                       |null                                                                                                                  |
+|SBA-OCA-2017-11-002 |2023-05-22|root=>title                     |0.0       |mod@2023-05-22 = [tS]                |ExtractServicing                                                                                                      |
+|SBA-OCA-2017-11-005 |2023-05-22|root=>title                     |0.0       |mod@2023-05-22 = [p]                 |OrigBypass                                                                                                            |
+|SBA-OCA-2017-11-002 |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                       |null                                                                                                                  |
+|SBA-OCIO-2015-08-003|2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                       |null                                                                                                                  |
+|SBA-OCA-2017-11-007 |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                       |null                                                                                                                  |
+|SBA-OCA-2017-11-004 |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                       |null                                                                                                                  |
+|SBA-OCIO-2015-08-001|2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                       |null                                                                                                                  |
+|SBA-OCA-2017-11-005 |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                       |null                                                                                                                  |
+|SBA-OCA-2017-11-003 |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                       |null                                                                                                                  |
+|SBA-OCA-2017-11-003 |2023-05-22|root=>distribution=>0=>accessURL|0.25979304|mod@2023-05-22 = [a.g]               |https://caweb.sba.gov/elend/ws/elend.wsdl                                                                             |
+|SBA-OCA-2017-11-002 |2023-05-22|root=>license                   |0.2936508 |mod@2023-05-22 = [.u]                |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-001 |2023-05-22|root=>distribution=>0=>accessURL|0.2942315 |mod@2023-05-22 = [sb]                |https://caweb.sba.gov/elend/ws/elend.wsdl                                                                             |
+|SBA-OCA-2017-11-006 |2023-05-22|root=>publisher=>name           |0.30426556|mod@2023-05-22 = []                  |U.S. Small Business Administration                                                                                    |
+|SBA-OCA-2017-11-005 |2023-05-22|root=>publisher=>name           |0.30426556|mod@2023-05-22 = []                  |U.S. Small Business Administration                                                                                    |
+|SBA-OCA-2017-11-004 |2023-05-22|root=>distribution=>0=>accessURL|0.31009486|mod@2023-05-22 = [ba.go]             |https://caweb.sba.gov/elend/ws/elend.wsdl                                                                             |
+|SBA-OCIO-2015-08-003|2023-05-22|root=>license                   |0.3121463 |mod@2023-05-22 = [tp:/]              |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-004 |2023-05-22|root=>description               |0.32242063|mod@2023-05-22 = [le]                |Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCIO-2015-08-002|2023-05-22|root=>distribution=>0=>accessURL|0.32493675|mod@2023-05-22 = [ww.s]              |https://www.sba.gov/document/policy-guidance--it-policy-archive                                                       |
+|SBA-OCIO-2015-08-003|2023-05-22|root=>distribution=>0=>accessURL|0.3282486 |mod@2023-05-22 = [ba.gov]            |https://www.sba.gov/about-sba/sba-performance/open-government/digital-sba/digital-strategy/governance-board-membership|
+|SBA-OCA-2017-11-006 |2023-05-22|root=>description               |0.34240568|mod@2023-05-22 = [aila]              |Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCA-2017-11-005 |2023-05-22|root=>distribution=>0=>accessURL|0.3431264 |mod@2023-05-22 = [b.s]               |https://caweb.sba.gov/elend/ws/elend.wsdl                                                                             |
+|SBA-OCA-2017-11-002 |2023-05-22|root=>publisher=>name           |0.35270774|mod@2023-05-22 = [U.]                |U.S. Small Business Administration                                                                                    |
+|SBA-OCA-2017-11-001 |2023-05-22|root=>publisher=>name           |0.35588235|mod@2023-05-22 = [s]                 |U.S. Small Business Administration                                                                                    |
+|SBA-OCIO-2015-08-002|2023-05-22|root=>publisher=>name           |0.35588235|mod@2023-05-22 = [S]                 |U.S. Small Business Administration                                                                                    |
+|SBA-OCIO-2015-08-003|2023-05-22|root=>title                     |0.3613516 |mod@2023-05-22 = [e B]               |CIO Governance Board Membership List                                                                                  |
+|SBA-OCIO-2015-08-002|2023-05-22|root=>description               |0.3640351 |mod@2023-05-22 = [list ]             |A list of all public documents relating to SBA IT policy.                                                             |
+|SBA-OCIO-2015-08-002|2023-05-22|root=>license                   |0.36507937|mod@2023-05-22 = [.gov/publ]         |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCIO-2015-08-002|2023-05-22|root=>title                     |0.37021476|mod@2023-05-22 = [BA IT Policy Ar]   |SBA IT Policy Archive                                                                                                 |
+|SBA-OCA-2017-11-007 |2023-05-22|root=>distribution=>0=>accessURL|0.3759381 |mod@2023-05-22 = [b.sba.g]           |https://caweb.sba.gov/elend/ws/elend.wsdl                                                                             |
+|SBA-OCA-2017-11-002 |2023-05-22|root=>description               |0.3786715 |mod@2023-05-22 = [le to th]          |Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCA-2017-11-007 |2023-05-22|root=>title                     |0.3825397 |mod@2023-05-22 = [ri]                |OrigUpdate                                                                                                            |
+|SBA-OCA-2017-11-003 |2023-05-22|root=>title                     |0.38333333|mod@2023-05-22 = [e]                 |Originate3                                                                                                            |
+|SBA-OCA-2017-11-002 |2023-05-22|root=>distribution=>0=>accessURL|0.39624333|mod@2023-05-22 = [eb.sba.gov]        |https://caweb.sba.gov/elend/ws/elend.wsdl                                                                             |
+|SBA-OCA-2017-11-005 |2023-05-22|root=>description               |0.39880952|mod@2023-05-22 = [lable to ]         |Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCIO-2015-08-001|2023-05-22|root=>description               |0.4026964 |mod@2023-05-22 = [ of all]           |A directory of all SBA officials with the title of CIO or duties of a CIO.                                            |
+|SBA-OCIO-2015-08-001|2023-05-22|root=>distribution=>0=>accessURL|0.41311204|mod@2023-05-22 = [a.gov/abou]        |https://www.sba.gov/about-sba/open-government/digital-sba#section-header-3                                            |
+|SBA-OCA-2017-11-003 |2023-05-22|root=>license                   |0.42301586|mod@2023-05-22 = [ww.usa.gov/]       |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-001 |2023-05-22|root=>license                   |0.42301586|mod@2023-05-22 = [www.usa.gov]       |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-004 |2023-05-22|root=>publisher=>name           |0.42624435|mod@2023-05-22 = [S. Smal]           |U.S. Small Business Administration                                                                                    |
+|SBA-OCA-2017-11-006 |2023-05-22|root=>license                   |0.43174604|mod@2023-05-22 = [p://www.u]         |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-006 |2023-05-22|root=>title                     |0.4351852 |mod@2023-05-22 = [rigSc]             |OrigScore                                                                                                             |
+|SBA-OCA-2017-11-006 |2023-05-22|root=>distribution=>0=>accessURL|0.43595818|mod@2023-05-22 = [web.sb]            |https://caweb.sba.gov/elend/ws/elend.wsdl                                                                             |
+|SBA-OCIO-2015-08-001|2023-05-22|root=>license                   |0.44808775|mod@2023-05-22 = [usa.gov/publ]      |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-004 |2023-05-22|root=>license                   |0.45051354|mod@2023-05-22 = [v/publicdomain/]   |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-007 |2023-05-22|root=>description               |0.45099807|mod@2023-05-22 = [ot available to t] |Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCA-2017-11-001 |2023-05-22|root=>description               |0.4688492 |mod@2023-05-22 = [e to the public.]  |Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCA-2017-11-003 |2023-05-22|root=>description               |0.4722689 |mod@2023-05-22 = [e to the public]   |Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCA-2017-11-007 |2023-05-22|root=>license                   |0.5132275 |mod@2023-05-22 = [ublicdomain/label] |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-004 |2023-05-22|root=>title                     |0.5138889 |mod@2023-05-22 = [Statu]             |OriginateStatus                                                                                                       |
+|SBA-OCA-2017-11-003 |2023-05-22|root=>publisher=>name           |0.52832246|mod@2023-05-22 = [. Small Business ] |U.S. Small Business Administration                                                                                    |
+|SBA-OCIO-2015-08-003|2023-05-22|root=>description               |0.5317652 |mod@2023-05-22 = [BA CIO’s mem]      |Information about SBA CIO’s membership in governance boards.                                                          |
+|SBA-OCIO-2015-08-003|2023-05-22|root=>publisher=>name           |0.5466759 |mod@2023-05-22 = [Business]          |U.S. Small Business Administration                                                                                    |
+|SBA-OCIO-2015-08-001|2023-05-22|root=>publisher=>name           |0.5540701 |mod@2023-05-22 = [ness Administr]    |U.S. Small Business Administration                                                                                    |
+|SBA-OCA-2017-11-005 |2023-05-22|root=>license                   |0.56427854|mod@2023-05-22 = [.usa.gov/publicdom]|http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCIO-2015-08-002|2023-05-22|root=>modified                  |0.6       |2023-05-22                           |2019-11-30                                                                                                            |
+|SBA-OCA-2017-11-001 |2023-05-22|root=>title                     |0.60714287|mod@2023-05-22 = [ctOrigina]         |ExtractOrigination                                                                                                    |
+|SBA-OCIO-2015-08-001|2023-05-22|root=>title                     |0.615617  |mod@2023-05-22 = [adership Dir]      |Bureau IT Leadership Directory                                                                                        |
+|SBA-OCA-2017-11-007 |2023-05-22|root=>publisher=>name           |0.6521093 |mod@2023-05-22 = [siness Adminis]    |U.S. Small Business Administration                                                                                    |
+|SBA-OCA-2017-11-002 |2023-05-22|root=>modified                  |0.6666667 |2023-05-22                           |2017-06-30                                                                                                            |
+|SBA-OCA-2017-11-001 |2023-05-22|root=>modified                  |0.6666667 |2023-05-22                           |2017-06-30                                                                                                            |
+|SBA-OCA-2017-11-003 |2023-05-22|root=>modified                  |0.6666667 |2023-05-22                           |2017-06-30                                                                                                            |
+|SBA-OCA-2017-11-006 |2023-05-22|root=>modified                  |0.6666667 |2023-05-22                           |2017-06-30                                                                                                            |
+|SBA-OCA-2017-11-004 |2023-05-22|root=>modified                  |0.6666667 |2023-05-22                           |2017-06-30                                                                                                            |
+|SBA-OCA-2017-11-007 |2023-05-22|root=>modified                  |0.6666667 |2023-05-22                           |2017-06-30                                                                                                            |
+|SBA-OCA-2017-11-005 |2023-05-22|root=>modified                  |0.6666667 |2023-05-22                           |2017-06-30                                                                                                            |
+|SBA-OCIO-2015-08-003|2023-05-22|root=>modified                  |0.67777777|2023-05-22                           |2015-08-30                                                                                                            |
+|SBA-OCIO-2015-08-001|2023-05-22|root=>modified                  |0.82666665|2023-05-22                           |2020-06-12                                                                                                            |
++--------------------+----------+--------------------------------+----------+-------------------------------------+----------------------------------------------------------------------------------------------------------------------+
+
+List of modified documents
++--------------------+
+|id                  |
++--------------------+
+|SBA-OCA-2017-11-005 |
+|SBA-OCA-2017-11-004 |
+|SBA-OCA-2017-11-003 |
+|SBA-OCA-2017-11-006 |
+|SBA-OCIO-2015-08-003|
+|SBA-OCA-2017-11-002 |
+|SBA-OCIO-2015-08-002|
+|SBA-OCIO-2015-08-001|
+|SBA-OCA-2017-11-007 |
+|SBA-OCA-2017-11-001 |
++--------------------+
+
+List of Top-5 modified columns for modified documents
++--------------------+---+----------+--------------------------------+----------+------------------------------------+----------------------------------------------------------------------------------------------------------------------+
+|id                  |rn |modified  |path                            |jws       |value                               |value_prev                                                                                                            |
++--------------------+---+----------+--------------------------------+----------+------------------------------------+----------------------------------------------------------------------------------------------------------------------+
+|SBA-OCA-2017-11-004 |1  |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                      |null                                                                                                                  |
+|SBA-OCA-2017-11-004 |2  |2023-05-22|root=>distribution=>0=>accessURL|0.31009486|mod@2023-05-22 = [ba.go]            |https://caweb.sba.gov/elend/ws/elend.wsdl                                                                             |
+|SBA-OCA-2017-11-004 |3  |2023-05-22|root=>description               |0.32242063|mod@2023-05-22 = [le]               |Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCA-2017-11-004 |4  |2023-05-22|root=>publisher=>name           |0.42624435|mod@2023-05-22 = [S. Smal]          |U.S. Small Business Administration                                                                                    |
+|SBA-OCA-2017-11-004 |5  |2023-05-22|root=>license                   |0.45051354|mod@2023-05-22 = [v/publicdomain/]  |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-005 |1  |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                      |null                                                                                                                  |
+|SBA-OCA-2017-11-005 |2  |2023-05-22|root=>title                     |0.0       |mod@2023-05-22 = [p]                |OrigBypass                                                                                                            |
+|SBA-OCA-2017-11-005 |3  |2023-05-22|root=>publisher=>name           |0.30426556|mod@2023-05-22 = []                 |U.S. Small Business Administration                                                                                    |
+|SBA-OCA-2017-11-005 |4  |2023-05-22|root=>distribution=>0=>accessURL|0.3431264 |mod@2023-05-22 = [b.s]              |https://caweb.sba.gov/elend/ws/elend.wsdl                                                                             |
+|SBA-OCA-2017-11-005 |5  |2023-05-22|root=>description               |0.39880952|mod@2023-05-22 = [lable to ]        |Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCA-2017-11-003 |1  |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                      |null                                                                                                                  |
+|SBA-OCA-2017-11-003 |2  |2023-05-22|root=>distribution=>0=>accessURL|0.25979304|mod@2023-05-22 = [a.g]              |https://caweb.sba.gov/elend/ws/elend.wsdl                                                                             |
+|SBA-OCA-2017-11-003 |3  |2023-05-22|root=>title                     |0.38333333|mod@2023-05-22 = [e]                |Originate3                                                                                                            |
+|SBA-OCA-2017-11-003 |4  |2023-05-22|root=>license                   |0.42301586|mod@2023-05-22 = [ww.usa.gov/]      |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-003 |5  |2023-05-22|root=>description               |0.4722689 |mod@2023-05-22 = [e to the public]  |Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCA-2017-11-006 |1  |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                      |null                                                                                                                  |
+|SBA-OCA-2017-11-006 |2  |2023-05-22|root=>publisher=>name           |0.30426556|mod@2023-05-22 = []                 |U.S. Small Business Administration                                                                                    |
+|SBA-OCA-2017-11-006 |3  |2023-05-22|root=>description               |0.34240568|mod@2023-05-22 = [aila]             |Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCA-2017-11-006 |4  |2023-05-22|root=>license                   |0.43174604|mod@2023-05-22 = [p://www.u]        |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-006 |5  |2023-05-22|root=>title                     |0.4351852 |mod@2023-05-22 = [rigSc]            |OrigScore                                                                                                             |
+|SBA-OCA-2017-11-002 |1  |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                      |null                                                                                                                  |
+|SBA-OCA-2017-11-002 |2  |2023-05-22|root=>title                     |0.0       |mod@2023-05-22 = [tS]               |ExtractServicing                                                                                                      |
+|SBA-OCA-2017-11-002 |3  |2023-05-22|root=>license                   |0.2936508 |mod@2023-05-22 = [.u]               |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-002 |4  |2023-05-22|root=>publisher=>name           |0.35270774|mod@2023-05-22 = [U.]               |U.S. Small Business Administration                                                                                    |
+|SBA-OCA-2017-11-002 |5  |2023-05-22|root=>description               |0.3786715 |mod@2023-05-22 = [le to th]         |Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCIO-2015-08-003|1  |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                      |null                                                                                                                  |
+|SBA-OCIO-2015-08-003|2  |2023-05-22|root=>license                   |0.3121463 |mod@2023-05-22 = [tp:/]             |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCIO-2015-08-003|3  |2023-05-22|root=>distribution=>0=>accessURL|0.3282486 |mod@2023-05-22 = [ba.gov]           |https://www.sba.gov/about-sba/sba-performance/open-government/digital-sba/digital-strategy/governance-board-membership|
+|SBA-OCIO-2015-08-003|4  |2023-05-22|root=>title                     |0.3613516 |mod@2023-05-22 = [e B]              |CIO Governance Board Membership List                                                                                  |
+|SBA-OCIO-2015-08-003|5  |2023-05-22|root=>description               |0.5317652 |mod@2023-05-22 = [BA CIO’s mem]     |Information about SBA CIO’s membership in governance boards.                                                          |
+|SBA-OCIO-2015-08-001|1  |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                      |null                                                                                                                  |
+|SBA-OCIO-2015-08-001|2  |2023-05-22|root=>description               |0.4026964 |mod@2023-05-22 = [ of all]          |A directory of all SBA officials with the title of CIO or duties of a CIO.                                            |
+|SBA-OCIO-2015-08-001|3  |2023-05-22|root=>distribution=>0=>accessURL|0.41311204|mod@2023-05-22 = [a.gov/abou]       |https://www.sba.gov/about-sba/open-government/digital-sba#section-header-3                                            |
+|SBA-OCIO-2015-08-001|4  |2023-05-22|root=>license                   |0.44808775|mod@2023-05-22 = [usa.gov/publ]     |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCIO-2015-08-001|5  |2023-05-22|root=>publisher=>name           |0.5540701 |mod@2023-05-22 = [ness Administr]   |U.S. Small Business Administration                                                                                    |
+|SBA-OCIO-2015-08-002|1  |2023-05-22|root=>keyword=>2                |0.0       |mod@2023-05-22                      |null                                                                                                                  |
+|SBA-OCIO-2015-08-002|2  |2023-05-22|root=>distribution=>0=>accessURL|0.32493675|mod@2023-05-22 = [ww.s]             |https://www.sba.gov/document/policy-guidance--it-policy-archive                                                       |
+|SBA-OCIO-2015-08-002|3  |2023-05-22|root=>publisher=>name           |0.35588235|mod@2023-05-22 = [S]                |U.S. Small Business Administration                                                                                    |
+|SBA-OCIO-2015-08-002|4  |2023-05-22|root=>description               |0.3640351 |mod@2023-05-22 = [list ]            |A list of all public documents relating to SBA IT policy.                                                             |
+|SBA-OCIO-2015-08-002|5  |2023-05-22|root=>license                   |0.36507937|mod@2023-05-22 = [.gov/publ]        |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-001 |1  |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                      |null                                                                                                                  |
+|SBA-OCA-2017-11-001 |2  |2023-05-22|root=>distribution=>0=>accessURL|0.2942315 |mod@2023-05-22 = [sb]               |https://caweb.sba.gov/elend/ws/elend.wsdl                                                                             |
+|SBA-OCA-2017-11-001 |3  |2023-05-22|root=>publisher=>name           |0.35588235|mod@2023-05-22 = [s]                |U.S. Small Business Administration                                                                                    |
+|SBA-OCA-2017-11-001 |4  |2023-05-22|root=>license                   |0.42301586|mod@2023-05-22 = [www.usa.gov]      |http://www.usa.gov/publicdomain/label/1.0/                                                                            |
+|SBA-OCA-2017-11-001 |5  |2023-05-22|root=>description               |0.4688492 |mod@2023-05-22 = [e to the public.] |Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCA-2017-11-007 |1  |2023-05-22|root=>keyword=>1                |0.0       |mod@2023-05-22                      |null                                                                                                                  |
+|SBA-OCA-2017-11-007 |2  |2023-05-22|root=>distribution=>0=>accessURL|0.3759381 |mod@2023-05-22 = [b.sba.g]          |https://caweb.sba.gov/elend/ws/elend.wsdl                                                                             |
+|SBA-OCA-2017-11-007 |3  |2023-05-22|root=>title                     |0.3825397 |mod@2023-05-22 = [ri]               |OrigUpdate                                                                                                            |
+|SBA-OCA-2017-11-007 |4  |2023-05-22|root=>description               |0.45099807|mod@2023-05-22 = [ot available to t]|Not available to the public. Additional information is available on an as needed basis due to security concerns.      |
+|SBA-OCA-2017-11-007 |5  |2023-05-22|root=>license                   |0.5132275 |mod@2023-05-22 = [ublicdomain/label]|http://www.usa.gov/publicdomain/label/1.0/                                                                            |
++--------------------+---+----------+--------------------------------+----------+------------------------------------+----------------------------------------------------------------------------------------------------------------------+
+

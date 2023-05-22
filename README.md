@@ -26,7 +26,10 @@
 </thead>
 <tbody>
 <tr>
-<td rowspan="6">DE</td>
+<td rowspan="7">DE</td>
+<td><a href="/de/sbla">PySpark: отслеживание изменений в JSON</a></td>
+</tr>
+<tr>
 <td><a href="/de/dl-etl-spark">PySpark-ETL for Hadoop/HDFS DataLake (manual submission + Airflow)</a></td>
 </tr>
 <tr>
